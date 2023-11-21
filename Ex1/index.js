@@ -10,9 +10,7 @@ const getData = (url) => {
 
 
 const formatData = async () => {
-    const users = await getData('https://jsonplaceholder.typicode.com/users');
-    const posts = await getData('https://jsonplaceholder.typicode.com/posts');
-    const comments = await getData('https://jsonplaceholder.typicode.com/comments');
+    const [users, posts, comments] = await Promise.all([getData('https://jsonplaceholder.typicode.com/users'), getData('https://jsonplaceholder.typicode.com/posts'), getData('https://jsonplaceholder.typicode.com/comments'),]);
     return users
         .map(user => {
             const userPosts = posts.filter(post => post.userId === user.id).map(post => {
@@ -32,10 +30,10 @@ const formatData = async () => {
             }
         });
 }
-const filter = (data) => {
+const filterUserWithMoreThan3Comments = (data) => {
     return data.filter(user => user.comments.length >= 3)
 }
-const reformat = (data) => {
+const reformatWithCount = (data) => {
     return data.map(user => ({
         id: user.id,
         name: user.name,
@@ -61,8 +59,8 @@ const getPostDataWithID = async (id) => {
 (async () => {
     const formattedData = await formatData();
     fs.writeFileSync('./step3.json', JSON.stringify(formattedData))
-    fs.writeFileSync('./step4.json', JSON.stringify(filter(formattedData)))
-    const reformattedUsers = reformat(formattedData);
+    fs.writeFileSync('./step4.json', JSON.stringify(filterUserWithMoreThan3Comments(formattedData)))
+    const reformattedUsers = reformatWithCount(formattedData);
     fs.writeFileSync('./step5.json', JSON.stringify(reformattedUsers));
     const mostComment = reformattedUsers.reduce((prev, current) => (prev.commentsCount > current.commentsCount) ? prev : current);
     const mostPost = reformattedUsers.reduce((prev, current) => (prev.postsCount > current.postsCount) ? prev : current);
