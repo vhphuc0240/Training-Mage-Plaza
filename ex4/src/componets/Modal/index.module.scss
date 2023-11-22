@@ -1,0 +1,31 @@
+.modal {
+  :global {
+    .Polaris-Modal__Body {
+      padding: 20px !important;
+      overflow-y: auto !important;
+    }
+  }
+}
+
+
+.footerModal {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0 6px;
+
+  :global {
+    .Polaris-Button {
+      padding: 8px 16px;
+
+      &:nth-child(2) {
+        background: #008060 !important;
+
+        .Polaris-Button__Text {
+          color: #fff !important;
+          font-size: 14px !important;
+          line-height: 20px !important;
+        }
+      }
+    }
+  }
+}
