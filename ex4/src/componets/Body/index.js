@@ -8,17 +8,17 @@ const BodyComponent = () => {
   const [isOpenModalCreateTodo, setIsOpenModalCreateTodo] = useState(false);
   const [todoList, setTodoList] = useState([
     {
-      id: 1,
+      id: "1",
       title: "Todo 1",
       status: "pending",
     },
     {
-      id: 2,
+      id: "2",
       title: "Todo 2",
       status: "pending",
     },
     {
-      id: 3,
+      id: "3",
       title: "Todo 3",
       status: "pending",
     },

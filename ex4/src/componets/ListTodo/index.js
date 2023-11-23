@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Badge,
   Button,
@@ -17,7 +17,7 @@ const ListTodo = ({ todoList, setTodoList }) => {
   };
   const handleCompleteTodo = (id) => {
     const newTodoList = todoList.map((todo) => {
-      if (todo.id === id) {
+      if (todo.id === id && todo.status !== "success") {
         return { ...todo, status: "success" };
       }
       return todo;
@@ -29,20 +29,35 @@ const ListTodo = ({ todoList, setTodoList }) => {
     const newTodoList = todoList.filter((todo) => todo.id !== id);
     setTodoList(newTodoList);
   };
+  const completedPromotedBulkActions = () => {
+    setTodoList((todos) => {
+      const updatedTodos = todos.map((todo) =>
+        selectedTodos.includes(todo.id) ? { ...todo, status: "success" } : todo,
+      );
+      setSelectedTodos([]);
+      return updatedTodos;
+    });
+  };
+  const deletedPromotedBulkActions = () => {
+    setTodoList((todos) =>
+      todos.filter((todo) => !selectedTodos.includes(todo.id)),
+    );
+    setSelectedTodos([]);
+  };
   const promotedBulkActions = [
     {
       content: "Complete",
-      onAction: () => {
-        selectedTodos.map((id) => handleCompleteTodo(id));
-      },
+      onAction: completedPromotedBulkActions,
     },
     {
       content: "Delete",
-      onAction: () => {
-        selectedTodos.map((id) => handleDeleteTodo(id));
-      },
+      onAction: deletedPromotedBulkActions,
     },
   ];
+
+  useEffect(() => {
+    console.log(todoList);
+  }, [todoList]);
 
   return (
     <Card>
@@ -63,7 +78,10 @@ const ListTodo = ({ todoList, setTodoList }) => {
                 <Badge status={todo.status === "success" ? "success" : "new"}>
                   {todo.status}
                 </Badge>
-                <Button onClick={() => handleCompleteTodo(todo.id)}>
+                <Button
+                  onClick={() => handleCompleteTodo(todo.id)}
+                  disabled={todo.status === "success"}
+                >
                   Complete
                 </Button>
                 <Button onClick={() => handleDeleteTodo(todo.id)}>

@@ -11,7 +11,11 @@ const CreateTodoModal = ({ isOpen, setIsOpen, todoList, setTodoList }) => {
   const handleSaveTodo = () => {
     setTodoList([
       ...todoList,
-      { id: todoList.length + 1, title: fieldValue, status: "pending" },
+      {
+        id: Math.floor(Math.random() * 10000).toString(),
+        title: fieldValue,
+        status: "pending",
+      },
     ]);
     setFieldValue("");
     setIsOpen(false);
