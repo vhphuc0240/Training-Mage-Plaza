@@ -1,7 +1,5 @@
 import React from "react";
 
-import "./header.scss";
-
 import { TopBar, Frame, ThemeProvider } from "@shopify/polaris";
 import { ArrowLeftMinor } from "@shopify/polaris-icons";
 import { useState, useCallback } from "react";
@@ -20,6 +18,7 @@ function Header() {
   const logo = {
     topBarSource: "/logo.png",
     url: "#",
+    width: 144,
     accessibilityLabel: "Shopify",
   };
 
