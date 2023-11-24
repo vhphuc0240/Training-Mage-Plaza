@@ -6,9 +6,8 @@ import {
   DisplayText,
   ResourceItem,
   ResourceList,
+  Stack,
 } from "@shopify/polaris";
-
-import styles from "./index.module.scss";
 
 const ListTodo = ({ todoList, setTodoList }) => {
   const [selectedTodos, setSelectedTodos] = useState([]);
@@ -16,18 +15,17 @@ const ListTodo = ({ todoList, setTodoList }) => {
     return id;
   };
   const handleCompleteTodo = (id) => {
-    const newTodoList = todoList.map((todo) => {
-      if (todo.id === id && todo.status !== "success") {
-        return { ...todo, status: "success" };
-      }
-      return todo;
-    });
-    setTodoList(newTodoList);
+    setTodoList((prev) =>
+      prev.map((todo) =>
+        todo.id === id && todo.status !== "success"
+          ? { ...todo, status: "success" }
+          : todo,
+      ),
+    );
   };
 
   const handleDeleteTodo = (id) => {
-    const newTodoList = todoList.filter((todo) => todo.id !== id);
-    setTodoList(newTodoList);
+    setTodoList((prev) => prev.filter((todo) => todo.id !== id));
   };
   const completedPromotedBulkActions = () => {
     setTodoList((todos) => {
@@ -70,25 +68,40 @@ const ListTodo = ({ todoList, setTodoList }) => {
         promotedBulkActions={promotedBulkActions}
         renderItem={(todo) => (
           <ResourceItem id={todo.id}>
-            <div className={styles.resourceList}>
-              <DisplayText variant="bodyMd" fontWeight="bold" as="h3">
-                {todo.title}
-              </DisplayText>
-              <div className={styles.right}>
-                <Badge status={todo.status === "success" ? "success" : "new"}>
-                  {todo.status}
-                </Badge>
-                <Button
-                  onClick={() => handleCompleteTodo(todo.id)}
-                  disabled={todo.status === "success"}
-                >
-                  Complete
-                </Button>
-                <Button onClick={() => handleDeleteTodo(todo.id)}>
-                  Delete
-                </Button>
-              </div>
-            </div>
+            <Stack distribution="equalSpacing" alignment="center">
+              <Stack.Item>
+                <DisplayText variant="bodyMd" fontWeight="bold" as="h3">
+                  {todo.title}
+                </DisplayText>
+              </Stack.Item>
+              <Stack.Item>
+                <Stack alignment="center">
+                  <Stack.Item>
+                    <Badge
+                      status={todo.status === "success" ? "success" : "new"}
+                    >
+                      {todo.status}
+                    </Badge>
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Button
+                      onClick={() => handleCompleteTodo(todo.id)}
+                      disabled={todo.status === "success"}
+                    >
+                      Complete
+                    </Button>
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Button
+                      onClick={() => handleDeleteTodo(todo.id)}
+                      destructive
+                    >
+                      Delete
+                    </Button>
+                  </Stack.Item>
+                </Stack>
+              </Stack.Item>
+            </Stack>
           </ResourceItem>
         )}
       />

@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Button, Modal, TextField } from "@shopify/polaris";
-import styles from "./index.module.scss";
+import { Button, Modal, Stack, TextField } from "@shopify/polaris";
 
 const CreateTodoModal = ({ isOpen, setIsOpen, todoList, setTodoList }) => {
   const [fieldValue, setFieldValue] = useState("");
@@ -22,10 +21,16 @@ const CreateTodoModal = ({ isOpen, setIsOpen, todoList, setTodoList }) => {
   };
   const FooterModal = () => {
     return (
-      <div className={styles.footerModal}>
-        <Button onClick={() => setIsOpen(false)}>Cancel</Button>
-        <Button onClick={handleSaveTodo}>Create</Button>
-      </div>
+      <Stack alignment="center" distribution="trailing">
+        <Stack.Item>
+          <Button onClick={() => setIsOpen(false)}>Cancel</Button>
+        </Stack.Item>
+        <Stack.Item>
+          <Button primary onClick={handleSaveTodo}>
+            Create
+          </Button>
+        </Stack.Item>
+      </Stack>
     );
   };
   return (
@@ -34,13 +39,13 @@ const CreateTodoModal = ({ isOpen, setIsOpen, todoList, setTodoList }) => {
       onClose={() => setIsOpen(false)}
       title="Create a new todo"
       footer={<FooterModal />}
-      iFrameName={styles.modal}
     >
       <Modal.Section>
         <TextField
           label=""
           value={fieldValue}
           onChange={handleOnChangeFieldValue}
+          autoComplete="off"
         />
       </Modal.Section>
     </Modal>
