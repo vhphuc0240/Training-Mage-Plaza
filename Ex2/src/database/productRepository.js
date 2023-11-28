@@ -5,12 +5,12 @@ import _ from "lodash";
 const __dirname = new URL(".", import.meta.url).pathname;
 
 const getProductsFromFile = () => {
-  const products = fs.readFileSync(__dirname + "/products.json", "utf-8");
+  const products = fs.readFileSync(__dirname + "/product.json", "utf-8");
   return JSON.parse(products);
 };
 
 const writeFile = (products) => {
-  fs.writeFileSync(__dirname + "/products.json", JSON.stringify(products));
+  fs.writeFileSync(__dirname + "/product.json", JSON.stringify(products));
 };
 
 const convertDateToTimestamp = (time) => {

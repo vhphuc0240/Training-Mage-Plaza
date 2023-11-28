@@ -5,7 +5,7 @@ const {
   getProductByIdHandler,
   updateProductByIdHandler,
   deleteProductByIdHandler,
-} = require("../handlers/products/productHandlers.js");
+} = require("../handlers/product/productHandlers.js");
 
 const router = new Router({
   prefix: "/api",

@@ -1,13 +1,7 @@
-const admin = require("firebase-admin");
 const _ = require("lodash");
-const serviceAccount = require("../config/serviceAccount.json");
+const admin = require("../config/db");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
-const db = admin.firestore();
-const productRef = db.collection("products");
+const productRef = admin.firestore().collection("products");
 
 const saveProducts = async (product) => {
   try {
@@ -25,7 +19,7 @@ const getProducts = async (limit, sort) => {
       .limit(limit | 20)
       .orderBy("createdAt", sort)
       .get();
-    return productsSnapshot.docs.map((doc) => doc.data());
+    return productsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   } catch (e) {
     console.log(e);
   }
