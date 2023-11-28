@@ -13,4 +13,4 @@ const app = require("./app");
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 
-exports.helloWorld = onRequest(app.callback());
+exports.api = onRequest(app.callback());
