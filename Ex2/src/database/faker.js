@@ -20,7 +20,7 @@ const generateFakeData = () => {
 
 const writeFakeData = () => {
   const fakeData = generateFakeData();
-  fs.writeFileSync(__dirname + "/products.json", JSON.stringify(fakeData));
+  fs.writeFileSync(__dirname + "/product.json", JSON.stringify(fakeData));
 };
 
 writeFakeData();
