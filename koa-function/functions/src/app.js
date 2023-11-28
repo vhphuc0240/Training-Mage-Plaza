@@ -1,6 +1,9 @@
 const Koa = require("koa");
 const { bodyParser } = require("@koa/bodyparser");
-const routes = require("./routes/routes");
+const cors = require("@koa/cors");
+const productsRoutes = require("./routes/productRoutes");
+const todosRoutes = require("./routes/todoRoutes");
+
 const app = new Koa();
 
 function hybridBodyParser(opts) {
@@ -10,9 +13,14 @@ function hybridBodyParser(opts) {
     return bp(ctx, next);
   };
 }
+
+app.use(cors());
 app.use(hybridBodyParser());
-app.use(routes.routes());
-app.use(routes.allowedMethods());
+app.use(productsRoutes.routes());
+app.use(productsRoutes.allowedMethods());
+
+app.use(todosRoutes.routes());
+app.use(todosRoutes.allowedMethods());
 app.use(async (ctx) => {
   ctx.body = "Hello World";
 });
