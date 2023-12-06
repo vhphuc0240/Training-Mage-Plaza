@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "workspaces": [
+    "assets",
+    "functions"
+  ],
+  "scripts": {
+    "start-dev": "concurrently \"yarn workspace functions run serve \" \"yarn workspace assets run start\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

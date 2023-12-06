@@ -10,7 +10,7 @@ const {
 
 const getTodosHandler = async (ctx) => {
   try {
-    const { limit, sort } = ctx.request.query;
+    const {limit, sort} = ctx.request.query;
     const todos = await getTodos(limit, sort);
     ctx.body = {
       success: true,
@@ -48,8 +48,8 @@ const saveTodoHandler = async (ctx) => {
 
 const getTodoByIdHandler = async (ctx) => {
   try {
-    const { id } = ctx.params;
-    const { fields } = ctx.request.query;
+    const {id} = ctx.params;
+    const {fields} = ctx.request.query;
     const todo = await getTodoById(id, fields);
     ctx.body = {
       success: true,
@@ -66,11 +66,11 @@ const getTodoByIdHandler = async (ctx) => {
 
 const deleteTodoByIdHandler = async (ctx) => {
   try {
-    const { id } = ctx.params;
+    const {id} = ctx.params;
     await deleteTodoById(id);
     ctx.body = {
       success: true,
-      data: "Todo deleted",
+      message: "Todo deleted",
     };
   } catch (e) {
     ctx.status = 404;
@@ -84,11 +84,12 @@ const deleteTodoByIdHandler = async (ctx) => {
 const updateTodoByIdHandler = async (ctx) => {
   try {
     const updateTodo = ctx.request.body.data;
-    const { id } = ctx.params;
+    const {id} = ctx.params;
     const res = await updateTodoById(id, updateTodo);
     ctx.body = {
       success: true,
       data: res,
+      message: "Todo updated",
     };
   } catch (e) {
     ctx.status = 404;
@@ -100,11 +101,11 @@ const updateTodoByIdHandler = async (ctx) => {
 };
 const deleteTodosHandler = async (ctx) => {
   try {
-    const { ids } = ctx.request.body.data;
+    const {ids} = ctx.request.body.data;
     await deleteTodos(ids);
     ctx.body = {
       success: true,
-      data: "Todo deleted",
+      message: "Todos deleted",
     };
   } catch (e) {
     ctx.status = 404;
@@ -116,11 +117,12 @@ const deleteTodosHandler = async (ctx) => {
 };
 const updateTodosHandler = async (ctx) => {
   try {
-    const { data } = ctx.request.body;
+    const {data} = ctx.request.body;
     const res = await updateTodos(data);
     ctx.body = {
       success: true,
       data: res,
+      message: "Todos updated",
     };
   } catch (e) {
     ctx.status = 404;
