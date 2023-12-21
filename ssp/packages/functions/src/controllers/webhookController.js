@@ -8,8 +8,7 @@ import {getCurrentShop} from '@functions/helpers/auth';
 async function createShopifyClassWithShopId(shopId) {
   const {accessToken, shopifyDomain} = await getShopDataById(shopId);
   return new Shopify({
-    shopName: shopifyDomain,
-    accessToken
+    shopName: shopifyDomain, accessToken
   });
 }
 
@@ -19,8 +18,7 @@ export async function listNewOrder(ctx) {
     const ordersData = ctx.req.body;
     const shop = await getShopByShopifyDomain(shopifyDomain);
     const shopify = new Shopify({
-      shopName: shop.shopifyDomain,
-      accessToken: shop.accessToken
+      shopName: shop.shopifyDomain, accessToken: shop.accessToken
     });
     const notifications = await parseOrdersToNotifications(shopify, [ordersData]);
     await addNotifications(shop.id, shopifyDomain, notifications);
@@ -41,8 +39,7 @@ export async function get(ctx) {
     const shopify = await createShopifyClassWithShopId(shopId);
     const webhooks = await shopify.webhook.list();
     return (ctx.body = {
-      data: webhooks,
-      success: true
+      data: webhooks, success: true
     });
   } catch (e) {
     console.log(e);
@@ -57,33 +54,20 @@ export async function update(ctx) {
     const shopId = getCurrentShop(ctx);
     const shopify = await createShopifyClassWithShopId(shopId);
     const {
-      id,
-      updateFields: {
-        address,
-        fields,
-        format,
-        metafield_namespaces,
-        private_metafield_namespaces,
-        topic
+      id, updateFields: {
+        address, fields, format, metafield_namespaces, private_metafield_namespaces, topic
       }
-    } = ctx.req.body;
+    } = ctx.req.body.data;
     const updatedWebhook = await shopify.webhook.update(id, {
-      address,
-      fields,
-      format,
-      metafield_namespaces,
-      private_metafield_namespaces,
-      topic
+      address, fields, format, metafield_namespaces, private_metafield_namespaces, topic
     });
     return (ctx.body = {
-      data: updatedWebhook,
-      success: true
+      data: updatedWebhook, success: true
     });
   } catch (e) {
     console.log(e);
     return (ctx.body = {
-      success: false,
-      error: e.message
+      success: false, error: e.message
     });
   }
 }
