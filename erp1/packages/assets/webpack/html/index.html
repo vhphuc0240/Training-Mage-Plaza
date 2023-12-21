@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="no-referrer"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AVADA CRM</title>
+    <style type="text/css">
+        .PreLoading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: -1
+        }
+
+        @keyframes Polaris-Spinner--loading {
+            100% {
+                transform: rotate(1turn)
+            }
+        }
+
+        .PreLoading img.PreLoading-Loader {
+            -webkit-filter: brightness(0) saturate(100%) invert(72%) sepia(8%) saturate(2838%) hue-rotate(130deg) brightness(92%) contrast(87%);
+            filter: brightness(0) saturate(100%) invert(72%) sepia(8%) saturate(2838%) hue-rotate(130deg) brightness(92%) contrast(87%);
+            height: 3rem;
+            width: 3rem;
+            animation: Polaris-Spinner--loading .5s linear infinite;
+            color: transparent
+        }
+
+        .PreLoading p {
+            font-weight: 700;
+            font-family: -apple-system, BlinkMacSystemFont, San Francisco, Roboto, Segoe UI, Helvetica Neue, sans-serif;
+            font-size: 1rem;
+            color: #424242
+        }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<div id="PreLoading" class="PreLoading">
+    <img
+        width="150px"
+        height="150px"
+        src="https://cdn1.avada.io/logo/branding-2022/Logo%20n%E1%BB%81n%20transparent/Brandmark_PhienBanMauChinhTrenNenSang.png"
+        alt="AVADA logo"
+    />
+    <img class="PreLoading-Loader"
+         src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNDQgNDQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE1LjU0MiAxLjQ4N0EyMS41MDcgMjEuNTA3IDAgMCAwIC41IDIyYzAgMTEuODc0IDkuNjI2IDIxLjUgMjEuNSAyMS41IDkuODQ3IDAgMTguMzY0LTYuNjc1IDIwLjgwOS0xNi4wNzJhMS41IDEuNSAwIDAgMC0yLjkwNC0uNzU2QzM3LjgwMyAzNC43NTUgMzAuNDczIDQwLjUgMjIgNDAuNSAxMS43ODMgNDAuNSAzLjUgMzIuMjE3IDMuNSAyMmMwLTguMTM3IDUuMy0xNS4yNDcgMTIuOTQyLTE3LjY1YTEuNSAxLjUgMCAxIDAtLjktMi44NjN6IiBmaWxsPSIjOTE5RUFCIi8+PC9zdmc+Cg=="
+         alt="Preloading" draggable="false" role="status">
+    <br/>
+    <div id="reload-notice" style="display: none">
+    <span class="Polaris-TextStyle--variationSubdued">
+      If this is still loading, try hard reload your browser with <span class="Polaris-Tag"><span title="Wholesale" class="Polaris-Tag__TagText">Ctrl + F5</span></span> or <span class="Polaris-Tag"><span title="Wholesale" class="Polaris-Tag__TagText">Command (⌘) + Option (⌥) + R</span></span>
+    </span>
+    </div>
+</div>
+<script>
+    if (window.location.hostname === 'public.avada.io') window.location.href = "https://avada.io";
+</script>
+</body>
+</html>

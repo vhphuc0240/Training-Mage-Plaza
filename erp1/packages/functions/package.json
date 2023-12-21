@@ -1,0 +1,45 @@
+{
+  "name": "@avada/functions",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "engines": {
+    "node": "16"
+  },
+  "scripts": {
+    "production": "babel src --out-dir lib --copy-files --include-dotfiles",
+    "development": "babel src --out-dir lib --copy-files --source-maps --include-dotfiles",
+    "watch": "babel src --out-dir lib --copy-files --source-maps --include-dotfiles --watch --verbose",
+    "eslint-fix": "./node_modules/.bin/eslint --fix ."
+  },
+  "dependencies": {
+    "@avada/firestore-utils": "0.0.3",
+    "@avada/shopify-auth": "1.4.0",
+    "@avada/shopify-charge": "1.3.12",
+    "@avada/subscription": "0.0.15",
+    "@avada/utils": "^0.0.7",
+    "@google-cloud/firestore": "^6.6.1",
+    "@koa/bodyparser": "^5.0.0",
+    "@koa/multer": "^3.0.2",
+    "axios": "^0.27.2",
+    "firebase-admin": "^10.2.0",
+    "firebase-functions": "^4.5.0",
+    "isomorphic-fetch": "^2.2.1",
+    "koa": "^2.8.1",
+    "koa-body": "^6.0.1",
+    "koa-ejs": "^4.2.0",
+    "koa-multer-esm": "^3.1.2",
+    "koa-router": "^7.4.0",
+    "multer": "^1.4.5-lts.1",
+    "qs": "^6.11.0",
+    "shopify-api-node": "3.11.0",
+    "yup": "^1.3.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/preset-env": "^7.17.10",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "eslint": "^7.3.0",
+    "pending-xhr-puppeteer": "^2.1.0"
+  }
+}

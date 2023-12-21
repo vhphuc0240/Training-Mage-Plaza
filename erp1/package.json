@@ -1,0 +1,40 @@
+{
+  "private": true,
+  "name": "@avada/app",
+  "description": "An AVADA application for Shopify written in Nodejs",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "deploy": "firebase deploy",
+    "serve-dev": "GOOGLE_APPLICATION_CREDENTIALS=serviceAccount.development.json firebase serve",
+    "shell": "firebase functions:shell",
+    "start": "avada app:serve",
+    "logs": "firebase functions:log",
+    "emulators": "GOOGLE_APPLICATION_CREDENTIALS=serviceAccount.development.json firebase emulators:start --only=functions,hosting",
+    "predeploy": "yarn workspace @avada/assets run production && yarn workspace @avada/functions run production",
+    "eslint-fix": "npm --prefix packages/assets/ run eslint-fix && npm --prefix packages/functions/ run eslint-fix",
+    "start-dev": "concurrently \"yarn workspace @avada/assets run watch\" \"yarn workspace @avada/functions run watch\" \"yarn start\"",
+    "make:ssl": "avada make:ssl",
+    "timeout": "delay 3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
+    "@babel/preset-react": "^7.16.7",
+    "babel-jest": "^24.9.0",
+    "eslint": "^6.3.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^6.2.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.16.0",
+    "firebase-tools": "^9.12.1",
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2"
+  },
+  "dependencies": {
+    "@avada/console": "^0.0.27-alpha.4",
+    "concurrently": "^5.3.0"
+  }
+}

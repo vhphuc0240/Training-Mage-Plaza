@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+        name="viewport">
+  <meta content="ie=edge" http-equiv="X-UA-Compatible">
+  <meta name="theme-color" content="#4285f4">
+  <meta name="description" content="An AVADA Shopify application for Shopify">
+  <title>Login | AVADA CRM</title>
+  <link rel="icon" href="/assets/favicon.png" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Poppins|Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css"
+        href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/loadingio/loading.css@v2.0.0/dist/loading.min.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/loadingio/ldbutton@v1.0.1/dist/ldbtn.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+          integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" type="text/css" href="/css/login.css">
+  <script type="text/javascript" src="../js/login.js"></script>
+</head>
+<body>
+<div id="firebaseui-auth-container"></div>
+<div class="limiter">
+  <div class="Avada-Login__Container">
+    <div class="Avada-Login__Wrap">
+      <div class="Avada-Login__Form Avada-Validate__Form flex-sb flex-w">
+        <div class=""></div>
+        <span class="Avada-Login__Form--title">
+            Sign In With
+        </span>
+        <button id="btn-google-login" class="btn-google" style="width: 100%">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="GOOGLE">
+          Google
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup
+  } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDRF2re3eUsCjT0zkx--Y7EAaC2MKv4G4s",
+    authDomain: "w4-training-app.firebaseapp.com",
+    projectId: "w4-training-app",
+    storageBucket: "w4-training-app.appspot.com",
+    messagingSenderId: "907327070813",
+    appId: "1:907327070813:web:d4f9d4449f4098233c63b4",
+    measurementId: "G-FH21LN8GJF"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
+  const provider = new GoogleAuthProvider();
+  const btnGoogleLogin = document.getElementById("btn-google-login");
+  const signIn = async () => {
+    const result = await signInWithPopup(auth, provider);
+    const data = JSON.stringify({
+      "email": result.user.email,
+      "avatar": result.user.photoURL
+    });
+
+    const xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+
+    xhr.addEventListener("readystatechange", function() {
+      if (this.readyState === 4) {
+        if (this.status === 200) {
+          localStorage.setItem("token", btoa(JSON.stringify(result.user?.stsTokenManager)));
+          localStorage.setItem("user", JSON.stringify({
+            user: JSON.parse(this.response)?.data
+          }));
+          Toastify({
+            text: "Login successfully",
+            duration: 3000,
+            gravity: "bottom",
+            position: "right",
+            backgroundColor: "#00a0ac",
+            stopOnFocus: true
+          }).showToast();
+          window.location.href = "/";
+        } else {
+          Toastify({
+            text: "Forbidden",
+            duration: 3000,
+            gravity: "bottom",
+            backgroundColor: "#ff0000",
+            stopOnFocus: true
+          }).showToast();
+          setTimeout(() => {
+            window.location.href = "/forbidden";
+          }, 2000);
+        }
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:5000/api/user/check");
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.send(data);
+  };
+
+  btnGoogleLogin.addEventListener("click", signIn);
+</script>
+</body>
+</html>
