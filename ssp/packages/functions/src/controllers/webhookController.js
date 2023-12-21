@@ -4,6 +4,7 @@ import {parseOrdersToNotifications} from '@functions/services/shopifyApiService'
 import {addNotifications} from '@functions/repositories/notificationRepository';
 import {getCurrentShop} from '@functions/helpers/auth';
 import {createShopifyClassWithShopId} from '@functions/helpers/utils/createShopifyClassWithShopId';
+import config from '@functions/config/app';
 
 export async function listNewOrder(ctx) {
   try {
@@ -117,6 +118,37 @@ export async function deleteWebhook(ctx) {
     console.log(e);
     return (ctx.body = {
       success: false
+    });
+  }
+}
+
+export async function republicWebhookAddress(ctx) {
+  try {
+    const shopId = getCurrentShop(ctx);
+    const shopify = await createShopifyClassWithShopId(shopId);
+    const appBaseUrl = config.baseUrl.toString();
+    const webhooks = await shopify.webhook.list({
+      topic: 'orders/create'
+    });
+    const result = await Promise.all(
+      webhooks.map(
+        async wb =>
+          await shopify.webhook.update(Number(wb.id), {
+            address: `https://${appBaseUrl}/webhook/order/new`,
+            topic: wb.topic
+          })
+      )
+    );
+    console.log(result);
+    return (ctx.body = {
+      data: webhooks,
+      success: true
+    });
+  } catch (e) {
+    console.log(e);
+    return (ctx.body = {
+      success: false,
+      error: e.message
     });
   }
 }

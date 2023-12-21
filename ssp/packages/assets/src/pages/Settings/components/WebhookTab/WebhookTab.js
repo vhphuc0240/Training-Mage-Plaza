@@ -5,20 +5,20 @@ import ListWebhook from '@assets/pages/Settings/components/WebhookTab/ListWebhoo
 import useCreateApi from '@assets/hooks/api/useCreateApi';
 import useConfirmModal from '@assets/hooks/popup/useConfirmModal';
 import WebhookModalContent from '@assets/pages/Settings/components/WebhookTab/WebhookModalContent';
+import useEditApi from '@assets/hooks/api/useEditApi';
 
 const WebhookTab = () => {
   const initialInput = {
-    address: '',
-    format: 'json',
-    topic: 'orders/create'
+    address: '', format: 'json', topic: 'orders/create'
   };
   const inputRef = useRef(initialInput);
 
   const {data, setData, loading} = useFetchApi({url: '/webhooks'});
   const {handleCreate: handleCreateWebhook, creating: creatingWebhook} = useCreateApi({
-    url: '/webhook',
-    fullResp: true
+    url: '/webhook', fullResp: true
   });
+
+  const {handleEdit, editing} = useEditApi({url: '/republic'});
   const modalContent = () => <WebhookModalContent inputRef={inputRef} />;
   const {modal, openModal, closeModal} = useConfirmModal({
     confirmAction: async () => {
@@ -33,13 +33,12 @@ const WebhookTab = () => {
     defaultCurrentInput: inputRef.current,
     loading: creatingWebhook
   });
-  return (
-    <>
-      <Page title="Webhook" primaryAction={{content: 'Create', onClick: openModal}}>
-        <ListWebhook data={data} setData={setData} loading={loading} />
-      </Page>
-      {modal}
-    </>
-  );
+  return (<>
+    <Page title="Webhook" primaryAction={{content: 'Create', onClick: openModal}}
+          secondaryActions={[{content: 'Republic', onAction: () => handleEdit({})}]}>
+      <ListWebhook data={data} setData={setData} loading={loading} />
+    </Page>
+    {modal}
+  </>);
 };
 export default WebhookTab;

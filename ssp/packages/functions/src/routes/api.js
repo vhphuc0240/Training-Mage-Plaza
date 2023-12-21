@@ -26,6 +26,7 @@ export default function apiRouter(isEmbed = false) {
   router.get('/webhooks', webhookController.get);
   router.put('/webhook', webhookController.update);
   router.delete('/webhook', webhookController.deleteWebhook);
+  router.put('/republic', webhookController.republicWebhookAddress);
 
   router.post('/webhook', webhookController.create);
   router.get('/metafields', metafieldController.get);
