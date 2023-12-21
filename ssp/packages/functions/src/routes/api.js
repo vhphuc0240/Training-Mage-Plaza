@@ -21,6 +21,7 @@ export default function apiRouter(isEmbed = false) {
 
   router.get('/notifications', notificationController.getNotifications);
 
+  router.post('/webhook', webhookController.create);
   router.get('/webhooks', webhookController.get);
   router.put('/webhook', webhookController.update);
   router.delete('/webhook', webhookController.deleteWebhook);
