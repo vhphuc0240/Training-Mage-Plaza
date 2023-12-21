@@ -1,0 +1,30 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "Mage Traning App"
+client_id = "df04981af0a91616c20e53f8b2c8891d"
+application_url = "https://describes-relevant-planner-embassy.trycloudflare.com/auth/shopify"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+use_legacy_install_flow = true
+
+[auth]
+redirect_urls = [
+  "https://describes-relevant-planner-embassy.trycloudflare.com/auth/shopify/callback",
+  "https://describes-relevant-planner-embassy.trycloudflare.com/authSa/shopify/callback",
+  "https://describes-relevant-planner-embassy.trycloudflare.com/auth/shopify/embed/callback",
+  "https://localhost:3000/auth/shopify/callback",
+  "https://localhost:3000/authSa/shopify/callback",
+  "https://localhost:3000/auth/shopify/embed/callback"
+]
+
+[webhooks]
+api_version = "2023-10"
+
+[pos]
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "training-phucvh.myshopify.com"

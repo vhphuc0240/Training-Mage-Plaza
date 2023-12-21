@@ -1,0 +1,22 @@
+{% assign metafield_value = shop.metafields.shopify_shop_settings.settings_attributes %}
+
+{% if metafield_value != blank %}
+  {%- comment -%}
+    Giá trị của metafield là một chuỗi JSON, bạn có thể giải mã nó thành đối tượng JavaScript.
+  {%- endcomment -%}
+  <script>
+    const settingsAttributes = {{ metafield_value | json }};
+    window.notificationSettings = settingsAttributes;
+  </script>
+{% endif %}
+
+
+{% schema %}
+{
+  "name": "Training Theme",
+  "target": "body",
+  "javascript": "test-notifications.js",
+  "settings": []
+}
+{% endschema %}
+
