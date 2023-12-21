@@ -3,96 +3,99 @@ import React, {useRef} from 'react';
 import useDeleteApi from '@assets/hooks/api/useDeleteApi';
 import useEditApi from '@assets/hooks/api/useEditApi';
 import useConfirmModal from '@assets/hooks/popup/useConfirmModal';
-import WebhookModalContent from '@assets/pages/Settings/components/WebhookTab/WebhookModalContent';
-import moment from 'moment';
+import MetaFieldModalContent from '@assets/pages/Settings/components/MeataFieldTab/MetaFieldModalContent';
+import moment from 'moment/moment';
 
-export default function ListWebhook({data, setData, loading}) {
+export default function ListMetaField({data, setData, loading}) {
   const initialInput = {
     address: '',
     format: 'json',
     topic: 'orders/create'
   };
   const inputRef = useRef(initialInput);
-  const handleUpdateWebhook = async () => {
+  const handleUpdateMetaField = async () => {
     const {id, ...rest} = inputRef.current;
     const resp = await handleEdit({id, updateFields: rest});
     if (resp.success) {
       setData(prev =>
-        prev.map(webhook => {
-          if (webhook.id === resp.data.id) {
+        prev.map(metafield => {
+          if (metafield.id === resp.data.id) {
             return resp.data;
           }
-          return webhook;
+          return metafield;
         })
       );
       inputRef.current = initialInput;
       closeModal();
     }
   };
-  const modalContent = () => <WebhookModalContent inputRef={inputRef} isEditing />;
+  const modalContent = () => <MetaFieldModalContent inputRef={inputRef} isEditing />;
   const {editing, handleEdit} = useEditApi({
     fullResp: true,
-    url: '/webhook'
+    url: '/metafield'
   });
   const {openModal, closeModal, modal} = useConfirmModal({
-    title: 'Update Webhook',
+    title: 'Update MetaField',
     buttonTitle: 'Update',
     defaultCurrentInput: inputRef.current,
-    confirmAction: handleUpdateWebhook,
+    confirmAction: handleUpdateMetaField,
     HtmlContent: modalContent,
     loading: editing
   });
-  const {deleting, handleDelete} = useDeleteApi({url: '/webhook'});
+  const {deleting, handleDelete} = useDeleteApi({url: '/metafield'});
 
   const {selectedResources, allResourcesSelected, handleSelectionChange} = useIndexResourceState(
     data
   );
 
-  const handleOpenModalUpdateWebhook = webhook => {
-    inputRef.current = webhook;
+  const handleOpenModalUpdateMetaField = metafield => {
+    inputRef.current = metafield;
     openModal();
   };
-  const handleDeleteWebhook = async id => {
+  const handleDeleteMetaField = async id => {
     const resp = await handleDelete({ids: [id]});
     if (resp) {
-      setData(prev => prev.filter(webhook => webhook.id !== id));
+      setData(prev => prev.filter(metafield => metafield.id !== id));
     }
   };
 
-  const handleDeleteBulkWebhooks = async () => {
+  const handleDeleteBulkMetaFields = async () => {
     const resp = await handleDelete({ids: selectedResources});
     if (resp) {
-      setData(prev => prev.filter(webhook => !selectedResources.includes(webhook.id)));
+      setData(prev => prev.filter(metafield => !selectedResources.includes(metafield.id)));
     }
   };
   const promotedBulkActions = [
     {
-      content: 'Delete webhooks',
-      onAction: handleDeleteBulkWebhooks
+      content: 'Delete metafields',
+      onAction: handleDeleteBulkMetaFields
     }
   ];
 
-  const rowMarkup = data.map((webhook, index) => (
+  const rowMarkup = data.map((metafield, index) => (
     <IndexTable.Row
-      id={webhook.id}
-      key={webhook.id}
-      selected={selectedResources.includes(webhook.id)}
+      id={metafield.id}
+      key={metafield.id}
+      selected={selectedResources.includes(metafield.id)}
       position={index}
     >
       <IndexTable.Cell>{index + 1}</IndexTable.Cell>
-      <IndexTable.Cell>{webhook.address}</IndexTable.Cell>
-      <IndexTable.Cell>{webhook.format}</IndexTable.Cell>
-      <IndexTable.Cell>{webhook.topic}</IndexTable.Cell>
+      <IndexTable.Cell>{metafield.owner_resource}</IndexTable.Cell>
+      <IndexTable.Cell>{metafield.type}</IndexTable.Cell>
+      <IndexTable.Cell>{metafield.namespace}</IndexTable.Cell>
+      <IndexTable.Cell>{metafield.key}</IndexTable.Cell>
+      <IndexTable.Cell>{metafield.description}</IndexTable.Cell>
+      <IndexTable.Cell>{metafield.value}</IndexTable.Cell>
       <IndexTable.Cell>
-        {moment(new Date(webhook.created_at).getTime()).format('LL')}
+        {moment(new Date(metafield.created_at).getTime()).format('LL')}
       </IndexTable.Cell>
       <IndexTable.Cell>
         <Stack alignment="center" distribution="equalSpacing">
-          <Button onClick={() => handleOpenModalUpdateWebhook(webhook)}>Update</Button>
+          <Button onClick={() => handleOpenModalUpdateMetaField(metafield)}>Update</Button>
           <Button
-            onClick={() => handleDeleteWebhook(webhook.id)}
+            onClick={() => handleDeleteMetaField(metafield.id)}
             destructive
-            loading={selectedResources.includes(webhook.id) && deleting}
+            loading={selectedResources.includes(metafield.id) && deleting}
           >
             Delete
           </Button>
@@ -107,9 +110,12 @@ export default function ListWebhook({data, setData, loading}) {
         selectedItemsCount={allResourcesSelected ? 'All' : selectedResources.length}
         headings={[
           {title: 'ID'},
-          {title: 'Address'},
-          {title: 'Format'},
-          {title: 'Topic'},
+          {title: 'Owner Resource'},
+          {title: 'Type'},
+          {title: 'Namespace'},
+          {title: 'Key'},
+          {title: 'Description'},
+          {title: 'Value'},
           {title: 'Created At'},
           {title: 'Action'}
         ]}
@@ -117,8 +123,8 @@ export default function ListWebhook({data, setData, loading}) {
         itemCount={data.length}
         loading={loading}
         resourceName={{
-          singular: 'webhook',
-          plural: 'webhooks'
+          singular: 'metafield',
+          plural: 'metafields'
         }}
         promotedBulkActions={promotedBulkActions}
         lastColumnSticky

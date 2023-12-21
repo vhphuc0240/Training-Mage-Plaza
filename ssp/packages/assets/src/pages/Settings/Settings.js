@@ -6,6 +6,7 @@ import NotificationPopup from '@assets/components/NotificationPopup/Notification
 import useFetchApi from '@assets/hooks/api/useFetchApi';
 import useEditApi from '@assets/hooks/api/useEditApi';
 import WebhookTab from '@assets/pages/Settings/components/WebhookTab';
+import MeataFieldTab from '@assets/pages/Settings/components/MeataFieldTab';
 
 /**
  * @return {JSX.Element}
@@ -50,6 +51,13 @@ export default function Settings() {
       accessibilityLabel: 'Webhook',
       panelID: 'webhook',
       child: <WebhookTab />
+    },
+    {
+      id: 'metafield',
+      content: 'Meta Field',
+      accessibilityLabel: 'Meta Field',
+      panelID: 'metafield',
+      child: <MeataFieldTab />
     }
   ];
   return (

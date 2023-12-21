@@ -6,6 +6,7 @@ import * as appNewsController from '@functions/controllers/appNewsController';
 import * as settingController from '@functions/controllers/settingController';
 import * as notificationController from '@functions/controllers/notificationController';
 import * as webhookController from '@functions/controllers/webhookController';
+import * as metafieldController from '@functions/controllers/metafieldController';
 import {getApiPrefix} from '@functions/const/app';
 
 export default function apiRouter(isEmbed = false) {
@@ -23,6 +24,11 @@ export default function apiRouter(isEmbed = false) {
 
   router.post('/webhook', webhookController.create);
   router.get('/webhooks', webhookController.get);
+  router.put('/webhook', webhookController.update);
+  router.delete('/webhook', webhookController.deleteWebhook);
+
+  router.post('/webhook', webhookController.create);
+  router.get('/metafields', metafieldController.get);
   router.put('/webhook', webhookController.update);
   router.delete('/webhook', webhookController.deleteWebhook);
   return router;

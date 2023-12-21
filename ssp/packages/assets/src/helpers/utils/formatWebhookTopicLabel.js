@@ -4,6 +4,11 @@ export function formatWebhookTopicLabel(topic) {
   return `${upperCaseFirstLetter(action)} ${upperCaseFirstLetter(formattedLabel)}`;
 }
 
+export function formatMetafieldTypeLabel(type) {
+  const formattedType = type.replaceAll('_', ' ');
+  return upperCaseFirstLetter(formattedType);
+}
+
 function upperCaseFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
