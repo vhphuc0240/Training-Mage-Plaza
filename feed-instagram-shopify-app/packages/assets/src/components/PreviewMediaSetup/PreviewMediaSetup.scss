@@ -1,0 +1,39 @@
+.Container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+
+  .Container-Preview {
+    .Container-Preview__ItemContainer {
+      position: relative;
+      display: inline-block;
+
+      .Preview_ItemContainer--HoverTrigger {
+        width: 100%;
+        height: fit-content;
+      }
+
+      .Preview_ItemContainer--HoverText {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: none;
+        padding: 10px;
+      }
+
+      &:hover {
+        .Preview_ItemContainer--HoverTrigger {
+          opacity: 0.5;
+        }
+
+        .Preview_ItemContainer--HoverText {
+          display: block;
+        }
+      }
+    }
+  }
+}

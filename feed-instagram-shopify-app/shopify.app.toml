@@ -1,0 +1,30 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "Feed Instagram App"
+client_id = "1b849229c05fc3ad6905e3b5bc412356"
+application_url = "https://displaying-rn-programming-updates.trycloudflare.com/auth/shopify"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+use_legacy_install_flow = true
+
+[auth]
+redirect_urls = [
+  "https://displaying-rn-programming-updates.trycloudflare.com/auth/shopify/callback",
+  "https://displaying-rn-programming-updates.trycloudflare.com/authSa/shopify/callback",
+  "https://displaying-rn-programming-updates.trycloudflare.com/auth/shopify/embed/callback",
+  "https://localhost:3000/auth/shopify/callback",
+  "https://localhost:3000/authSa/shopify/callback",
+  "https://localhost:3000/auth/shopify/embed/callback"
+]
+
+[webhooks]
+api_version = "2023-10"
+
+[pos]
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "training-phucvh.myshopify.com"
