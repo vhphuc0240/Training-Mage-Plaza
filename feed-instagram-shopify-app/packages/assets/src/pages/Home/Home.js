@@ -21,6 +21,7 @@ import {disconnect} from '../../actions/authAction';
 import useFetchApi from '@assets/hooks/api/useFetchApi';
 import PreviewMediaSetup from '@assets/components/PreviewMediaSetup/PreviewMediaSetup';
 import useEditApi from '@assets/hooks/api/useEditApi';
+import useDeleteApi from '@assets/hooks/api/useDeleteApi';
 
 /**
  * Render a home page for overview
@@ -70,6 +71,9 @@ export default function Home() {
       instagramId: state?.user?.instagramId
     }
   });
+  const {handleDelete: handleLogout, deleting} = useDeleteApi({
+    url: '/user'
+  });
 
   useEffect(() => {
     const params = queryString.parse(window.location.search);
@@ -102,8 +106,11 @@ export default function Home() {
     }
     return false;
   };
-  const handleDisconnect = () => {
+  const handleDisconnect = async () => {
     updateUser(null);
+    await handleLogout({
+      id: state?.user?.id
+    });
     disconnect();
   };
 
@@ -179,7 +186,13 @@ export default function Home() {
                           </Stack.Item>
                           <Stack.Item>|</Stack.Item>
                           <Stack.Item>
-                            <Button onClick={handleDisconnect} monochrome plain primary>
+                            <Button
+                              onClick={handleDisconnect}
+                              monochrome
+                              plain
+                              primary
+                              loading={deleting}
+                            >
                               {' '}
                               Disconnect
                             </Button>
@@ -210,7 +223,7 @@ export default function Home() {
                         />
 
                         <Stack alignment="trailing" distribution="fill">
-                          {/*<Stack.Item>*/}
+                          {/* <Stack.Item>*/}
                           {/*  <Select*/}
                           {/*    label={<TextStyle variation="strong">On post click</TextStyle>}*/}
                           {/*    value="new_tab"*/}
@@ -222,7 +235,7 @@ export default function Home() {
                           {/*      }*/}
                           {/*    ]}*/}
                           {/*  />*/}
-                          {/*</Stack.Item>*/}
+                          {/* </Stack.Item>*/}
 
                           <Stack.Item>
                             <TextField
@@ -235,7 +248,7 @@ export default function Home() {
                             />
                           </Stack.Item>
 
-                          {/*<Stack.Item>*/}
+                          {/* <Stack.Item>*/}
                           {/*  <Select*/}
                           {/*    label={<TextStyle variation="strong">Rounded corners</TextStyle>}*/}
                           {/*    value="new_tab"*/}
@@ -247,7 +260,7 @@ export default function Home() {
                           {/*      }*/}
                           {/*    ]}*/}
                           {/*  />*/}
-                          {/*</Stack.Item>*/}
+                          {/* </Stack.Item>*/}
                         </Stack>
 
                         <Stack alignment="trailing" distribution="fill">
@@ -265,7 +278,7 @@ export default function Home() {
                             />
                           </Stack.Item>
 
-                          {/*<Stack.Item>*/}
+                          {/* <Stack.Item>*/}
                           {/*  <Select*/}
                           {/*    label={<TextStyle variation="strong">Configuration</TextStyle>}*/}
                           {/*    value="new_tab"*/}
@@ -277,7 +290,7 @@ export default function Home() {
                           {/*      }*/}
                           {/*    ]}*/}
                           {/*  />*/}
-                          {/*</Stack.Item>*/}
+                          {/* </Stack.Item>*/}
                         </Stack>
 
                         <Stack alignment="trailing" distribution="fill">
