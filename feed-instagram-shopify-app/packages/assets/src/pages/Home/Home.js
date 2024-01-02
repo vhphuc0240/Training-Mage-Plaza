@@ -341,7 +341,10 @@ export default function Home() {
                 <Layout.Section>
                   <Card sectioned title="Preview">
                     <Card.Section>
-                      <PreviewMediaSetup settings={settings} />
+                      <PreviewMediaSetup
+                        settings={settings}
+                        medias={JSON.parse(localStorage.getItem('user'))?.user?.medias}
+                      />
                     </Card.Section>
                   </Card>
                 </Layout.Section>

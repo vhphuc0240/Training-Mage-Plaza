@@ -6,11 +6,11 @@ import moment from 'moment';
 
 /**
  * @param settings
+ * @param medias
  * @returns {JSX.Element}
  * @constructor
  */
-function PreviewMediaSetup({settings}) {
-  const medias = JSON.parse(localStorage.getItem('user'))?.user?.medias;
+function PreviewMediaSetup({settings, medias}) {
   return (
     <>
       {medias?.length > 0 && (
@@ -38,7 +38,7 @@ function PreviewMediaSetup({settings}) {
                   }}
                 >
                   <img
-                    src={media?.media_url}
+                    src={media?.media_type === 'VIDEO' ? media?.thumbnail_url : media?.media_url}
                     alt=""
                     className="Preview_ItemContainer--HoverTrigger"
                   />
@@ -61,7 +61,14 @@ PreviewMediaSetup.propTypes = {
     row: PropTypes.number,
     title: PropTypes.string,
     spacing: PropTypes.string
-  })
+  }),
+  medias: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      media_url: PropTypes.string,
+      timestamp: PropTypes.number
+    })
+  )
 };
 
 export default PreviewMediaSetup;

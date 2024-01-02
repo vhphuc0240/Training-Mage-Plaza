@@ -11,6 +11,9 @@
   }
 
   .Container-Preview {
+    justify-items: center;
+    align-items: center;
+
     .Container-Preview__ItemContainer {
       position: relative;
       display: inline-block;
@@ -19,7 +22,9 @@
 
       .Preview_ItemContainer--HoverTrigger {
         width: 100%;
-        height: fit-content;
+        height: min(100vw, 200px);
+        object-fit: cover;
+        margin: 0 auto;
       }
 
       .Preview_ItemContainer--HoverText {
