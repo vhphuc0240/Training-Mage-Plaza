@@ -6,10 +6,16 @@
   height: 100%;
   text-align: center;
 
+  .Container-Title {
+    margin-bottom: 20px;
+  }
+
   .Container-Preview {
     .Container-Preview__ItemContainer {
       position: relative;
       display: inline-block;
+      height: fit-content;
+      width: fit-content;
 
       .Preview_ItemContainer--HoverTrigger {
         width: 100%;
