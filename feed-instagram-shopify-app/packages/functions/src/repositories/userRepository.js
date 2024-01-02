@@ -72,3 +72,13 @@ export async function updateUserWhenRefreshInstagramAccessToken(id, data) {
     return false;
   }
 }
+
+export async function deleteUserById(id) {
+  try {
+    await userRef.doc(id).delete();
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+}

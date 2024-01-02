@@ -2,28 +2,39 @@ import {Firestore} from '@google-cloud/firestore';
 
 const firestore = new Firestore();
 /** @type CollectionReference */
-const mediaRef = firestore.collection('medias');
+const mediasRef = firestore.collection('medias');
 
 /**
- *
+ * @param shopifyDomain
+ * @param shopId
  * @param instagramId
  * @param userId
  * @param medias
- * @returns {Promise<*|boolean>}
+ * @returns {Promise<{medias, instagramId, id: string, shopId, shopifyDomain, userId}|boolean>}
  */
-export async function saveMediasWithInstagramId(instagramId, userId, medias) {
+export async function saveMediasWithInstagramId(
+  shopifyDomain,
+  shopId,
+  instagramId,
+  userId,
+  medias
+) {
   try {
-    const batch = firestore.batch();
-    const resp = medias.map(media => {
-      const docRef = mediaRef.doc();
-      batch.set(docRef, {instagramId, userId, ...media});
-      return {
-        id: docRef.id,
-        ...media
-      };
+    const media = await mediasRef.add({
+      shopifyDomain,
+      shopId,
+      instagramId,
+      userId,
+      medias
     });
-    await batch.commit();
-    return resp;
+    return {
+      id: media.id,
+      shopifyDomain,
+      shopId,
+      instagramId,
+      userId,
+      medias
+    };
   } catch (e) {
     console.log(e);
     return false;
@@ -37,7 +48,7 @@ export async function saveMediasWithInstagramId(instagramId, userId, medias) {
  */
 export async function getMediasByInstagramId(instagramId) {
   try {
-    const mediaSnapshot = await mediaRef
+    const mediaSnapshot = await mediasRef
       .where('instagramId', '==', instagramId)
       .orderBy('timestamp', 'desc')
       .get();
@@ -46,5 +57,22 @@ export async function getMediasByInstagramId(instagramId) {
   } catch (e) {
     console.log(e);
     return [];
+  }
+}
+
+export async function deleteMediaByUserId(userId) {
+  try {
+    const media = mediasRef.where('userId', '==', userId);
+    const mediaSnapshot = await media.get();
+    if (mediaSnapshot.empty) return true;
+    const batch = firestore.batch();
+    mediaSnapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
   }
 }

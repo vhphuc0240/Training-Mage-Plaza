@@ -1,13 +1,17 @@
 import {
+  deleteUserById,
   getUserByInstagramId,
   saveUser,
   updateUserWhenRefreshInstagramAccessToken
 } from '@functions/repositories/userRepository';
 import InstagramApi from '@functions/helpers/utils/InstagramApi';
 import {
+  deleteMediaByUserId,
   getMediasByInstagramId,
   saveMediasWithInstagramId
 } from '@functions/repositories/mediaRepository';
+import {getCurrentShop} from '@functions/helpers/auth';
+import {getShopById} from '@functions/repositories/shopRepository';
 
 const Instagram = new InstagramApi();
 
@@ -18,6 +22,8 @@ const Instagram = new InstagramApi();
  */
 export async function checkUserExit(ctx) {
   try {
+    const shopId = getCurrentShop(ctx);
+    const shopInfo = await getShopById(shopId);
     const {data} = ctx.req.body;
     /*
      * get short live access token from code on Instagram API
@@ -40,6 +46,7 @@ export async function checkUserExit(ctx) {
        */
 
       const {id, expiresIn, instagramId, accessToken, username} = user;
+      const medias = await getMediasByInstagramId(instagramId);
       if (!(Number(expiresIn) / 1000 - 60 * 60 * 1000 > 0)) {
         /*
          * token expired => refresh token
@@ -75,7 +82,8 @@ export async function checkUserExit(ctx) {
           data: {
             id,
             instagramId,
-            username
+            username,
+            medias: medias?.medias
           },
           status: true
         });
@@ -83,13 +91,12 @@ export async function checkUserExit(ctx) {
       /*
        * token not expired => return data for client
        */
-      const medias = await getMediasByInstagramId(instagramId);
       return (ctx.body = {
         data: {
           id,
           instagramId,
           username,
-          medias
+          medias: medias?.medias
         },
         status: true
       });
@@ -131,6 +138,8 @@ export async function checkUserExit(ctx) {
       tokenType: token_type,
       instagramId: id,
       username,
+      shopId,
+      shopifyDomain: shopInfo.shopifyDomain,
       createdAt: new Date(),
       updatedAt: new Date()
     });
@@ -146,8 +155,13 @@ export async function checkUserExit(ctx) {
         status: false
       });
     }
-    const saveMediaResult = await saveMediasWithInstagramId(id, userId, media.data);
-    console.log(saveMediaResult, 'saveMediaResult');
+    const saveMediaResult = await saveMediasWithInstagramId(
+      shopInfo?.shopifyDomain,
+      shopId,
+      id,
+      userId,
+      media.data
+    );
     if (!saveMediaResult) {
       return (ctx.body = {
         data: [],
@@ -160,7 +174,7 @@ export async function checkUserExit(ctx) {
         username,
         instagramId: id,
         id: userId,
-        media: saveMediaResult
+        medias: saveMediaResult?.medias
       },
       status: true
     });
@@ -199,6 +213,36 @@ export async function getUserDataByInstagramId(ctx) {
         username,
         medias
       },
+      status: true
+    });
+  } catch (e) {
+    console.log(e);
+    return (ctx.body = {
+      data: [],
+      error: e.message,
+      status: false
+    });
+  }
+}
+
+/**
+ * @param ctx
+ * @returns {Promise<{data: *[], error: string, status: boolean}|{data: *[], error, status: boolean}|{data: boolean, status: boolean}>}
+ */
+export async function deleteUser(ctx) {
+  try {
+    const {data} = ctx.req.body;
+    const user = await deleteUserById(data.id);
+    const media = await deleteMediaByUserId(data.id);
+    if (!user || !media) {
+      return (ctx.body = {
+        data: [],
+        error: 'User not found',
+        status: false
+      });
+    }
+    return (ctx.body = {
+      data: [],
       status: true
     });
   } catch (e) {
