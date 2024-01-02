@@ -12,6 +12,7 @@ import {
 } from '@functions/repositories/mediaRepository';
 import {getCurrentShop} from '@functions/helpers/auth';
 import {getShopById} from '@functions/repositories/shopRepository';
+import {deleteSettingsByShopifyDomain} from '@functions/repositories/settingsRepository';
 
 const Instagram = new InstagramApi();
 
@@ -231,10 +232,13 @@ export async function getUserDataByInstagramId(ctx) {
  */
 export async function deleteUser(ctx) {
   try {
+    const shopId = getCurrentShop(ctx);
+    const shopInfo = await getShopById(shopId);
     const {data} = ctx.req.body;
     const user = await deleteUserById(data.id);
     const media = await deleteMediaByUserId(data.id);
-    if (!user || !media) {
+    const settings = await deleteSettingsByShopifyDomain(shopInfo.shopifyDomain);
+    if (!user || !media || !settings) {
       return (ctx.body = {
         data: [],
         error: 'User not found',

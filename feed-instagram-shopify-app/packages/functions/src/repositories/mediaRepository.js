@@ -60,6 +60,10 @@ export async function getMediasByInstagramId(instagramId) {
   }
 }
 
+/**
+ * @param userId
+ * @returns {Promise<boolean>}
+ */
 export async function deleteMediaByUserId(userId) {
   try {
     const media = mediasRef.where('userId', '==', userId);
@@ -74,5 +78,20 @@ export async function deleteMediaByUserId(userId) {
   } catch (e) {
     console.log(e);
     return false;
+  }
+}
+
+/**
+ * @param shopifyDomain
+ * @returns {Promise<(*&{id: *})[]|*[]>}
+ */
+export async function getMediaByShopifyDomain(shopifyDomain) {
+  try {
+    const mediaSnapshot = await mediasRef.where('shopifyDomain', '==', shopifyDomain).get();
+    if (mediaSnapshot.empty) return [];
+    return mediaSnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+  } catch (e) {
+    console.log(e);
+    return [];
   }
 }

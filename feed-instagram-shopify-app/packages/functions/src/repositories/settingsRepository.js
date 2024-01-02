@@ -40,3 +40,19 @@ export async function saveSettingsWithInstagramId(shopifyDomain, shopId, instagr
     return false;
   }
 }
+
+/**
+ * @param shopifyDomain
+ * @returns {Promise<boolean>}
+ */
+export async function deleteSettingsByShopifyDomain(shopifyDomain) {
+  try {
+    const settings = await settingRef.where('shopifyDomain', '==', shopifyDomain).get();
+    if (settings.empty) return true;
+    await Promise.all(settings.docs.map(async doc => await doc.ref.delete()));
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+}
