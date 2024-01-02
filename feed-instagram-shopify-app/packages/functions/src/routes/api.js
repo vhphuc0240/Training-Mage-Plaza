@@ -18,6 +18,8 @@ export default function apiRouter(isEmbed = false) {
 
   router.post('/check-user-exit', userController.checkUserExit);
   router.get('/user', userController.getUserDataByInstagramId);
+  router.delete('/user', userController.deleteUser);
+
   // router.get('/get-media');
   router.put('/settings', settingsController.saveSettings);
   router.get('/settings', settingsController.getSettingsByIgId);
