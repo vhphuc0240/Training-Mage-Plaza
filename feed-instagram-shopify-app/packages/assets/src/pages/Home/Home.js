@@ -131,7 +131,7 @@ export default function Home() {
         <Loading />
       ) : (
         <Layout>
-          <Layout.Section oneThird>
+          <Layout.Section>
             <FormLayout>
               <Layout>
                 <Layout.Section>
@@ -325,7 +325,7 @@ export default function Home() {
               </Layout>
             </FormLayout>
           </Layout.Section>
-          <Layout.Section>
+          <Layout.Section oneThird>
             {/*  /!*<FormLayout>*!/*/}
             {/*  /!*  <Layout>*!/*/}
             {/*  /!*    <Layout.Section>*!/*/}
