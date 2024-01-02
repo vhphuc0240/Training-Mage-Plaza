@@ -20,17 +20,20 @@ export async function getSettingsByInstagramId(instagramId) {
 }
 
 /**
- *
+ * @param shopifyDomain
+ * @param shopId
  * @param instagramId
  * @param settings
- * @returns {Promise<(*&{id})|boolean>}
+ * @returns {Promise<(*&{id, shopId, shopifyDomain})|boolean>}
  */
-export async function saveSettingsWithInstagramId(instagramId, settings) {
+export async function saveSettingsWithInstagramId(shopifyDomain, shopId, instagramId, settings) {
   try {
-    await settingRef.doc(instagramId).set(settings, {merge: true});
+    await settingRef.doc(instagramId).set({shopifyDomain, shopId, ...settings}, {merge: true});
     return {
       id: instagramId,
-      ...settings
+      ...settings,
+      shopifyDomain,
+      shopId
     };
   } catch (e) {
     console.log(e);

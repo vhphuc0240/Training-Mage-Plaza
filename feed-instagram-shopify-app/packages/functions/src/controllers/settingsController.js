@@ -2,6 +2,8 @@ import {
   getSettingsByInstagramId,
   saveSettingsWithInstagramId
 } from '@functions/repositories/settingsRepository';
+import {getCurrentShop} from '@functions/helpers/auth';
+import {getShopById} from '@functions/repositories/shopRepository';
 
 /**
  * @param ctx
@@ -39,7 +41,9 @@ export async function saveSettings(ctx) {
     const {
       data: {id, ...settings}
     } = ctx.req.body;
-    const result = await saveSettingsWithInstagramId(id, settings);
+    const shopId = getCurrentShop(ctx);
+    const shopInfo = await getShopById(shopId);
+    const result = await saveSettingsWithInstagramId(shopInfo?.shopifyDomain, shopId, id, settings);
     if (!result) {
       return (ctx.body = {
         success: false,
