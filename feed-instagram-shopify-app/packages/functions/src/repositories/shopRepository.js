@@ -14,3 +14,12 @@ export async function getShopById(id) {
   const doc = await collection.doc(id).get();
   return presentDataAndFormatDate(doc, presentShop);
 }
+
+/**
+ * @param id
+ * @returns {Promise<FirebaseFirestore.DocumentData>}
+ */
+export async function getShopDataById(id) {
+  const doc = await collection.doc(id).get();
+  return doc.data();
+}
