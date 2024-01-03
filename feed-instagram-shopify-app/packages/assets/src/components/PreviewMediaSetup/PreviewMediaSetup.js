@@ -11,6 +11,7 @@ import moment from 'moment';
  * @constructor
  */
 function PreviewMediaSetup({settings, medias}) {
+  console.log(medias[0]);
   return (
     <>
       {medias?.length > 0 && (
@@ -57,8 +58,8 @@ function PreviewMediaSetup({settings, medias}) {
 
 PreviewMediaSetup.propTypes = {
   settings: PropTypes.shape({
-    col: PropTypes.number,
-    row: PropTypes.number,
+    col: PropTypes.string,
+    row: PropTypes.string,
     title: PropTypes.string,
     spacing: PropTypes.string
   }),

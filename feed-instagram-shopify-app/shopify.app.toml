@@ -2,7 +2,7 @@
 
 name = "Feed Instagram App"
 client_id = "1b849229c05fc3ad6905e3b5bc412356"
-application_url = "https://fioricet-beautifully-slides-paths.trycloudflare.com/auth/shopify"
+application_url = "https://d4eb-171-224-179-158.ngrok-free.app/auth/shopify"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,9 @@ use_legacy_install_flow = true
 
 [auth]
 redirect_urls = [
-  "https://fioricet-beautifully-slides-paths.trycloudflare.com/auth/shopify/callback",
-  "https://fioricet-beautifully-slides-paths.trycloudflare.com/authSa/shopify/callback",
-  "https://fioricet-beautifully-slides-paths.trycloudflare.com/auth/shopify/embed/callback",
+  "https://d4eb-171-224-179-158.ngrok-free.app/auth/shopify/callback",
+  "https://d4eb-171-224-179-158.ngrok-free.app/authSa/shopify/callback",
+  "https://d4eb-171-224-179-158.ngrok-free.app/auth/shopify/embed/callback",
   "https://localhost:3000/auth/shopify/callback",
   "https://localhost:3000/authSa/shopify/callback",
   "https://localhost:3000/auth/shopify/embed/callback"
