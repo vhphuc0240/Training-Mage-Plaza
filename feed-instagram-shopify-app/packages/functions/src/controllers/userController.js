@@ -1,20 +1,63 @@
 import {
   deleteUserById,
-  getUserByInstagramId,
+  getUserByShopId,
   saveUser,
   updateUserWhenRefreshInstagramAccessToken
 } from '@functions/repositories/userRepository';
 import InstagramApi from '@functions/helpers/utils/InstagramApi';
 import {
+  deleteMediaById,
   deleteMediaByUserId,
-  getMediasByInstagramId,
-  saveMediasWithInstagramId
+  getMediasByShopId,
+  saveMediasWithInstagramId,
+  updateMediaById
 } from '@functions/repositories/mediaRepository';
 import {getCurrentShop} from '@functions/helpers/auth';
 import {getShopById} from '@functions/repositories/shopRepository';
 import {deleteSettingsByShopifyDomain} from '@functions/repositories/settingsRepository';
+import {filterExpriredId, separateArray} from '@functions/helpers/utils/separateArray';
 
 const Instagram = new InstagramApi();
+
+/**
+ * @param {string[]} expriredMediaIds
+ * @param {[]}medias
+ * @param {string} accessToken
+ * @returns {Promise<void>}
+ */
+export async function refreshMedias(expriredMediaIds, medias, accessToken) {
+  const mediasNewest = await Promise.all(
+    expriredMediaIds.map(id => Instagram.getMediaById(id, accessToken))
+  );
+
+  const refreshedMedias = medias.map(media => {
+    const newMedia = media?.medias.map(item => {
+      const t = mediasNewest.find(n => item.id === n.id);
+      const baseObj = {
+        ...item,
+        media_url: t?.media_url,
+        lastSync: Date.now()
+      };
+      return t?.id
+        ? t.media_type === 'VIDEO'
+          ? {...baseObj, thumbnail_url: t.thumbnail_url}
+          : baseObj
+        : item;
+    });
+    return {
+      ...media,
+      medias: newMedia
+    };
+  });
+  await Promise.all(
+    refreshedMedias.map(
+      async media =>
+        await updateMediaById(media.id, media.instagramId, {
+          medias: media?.medias
+        })
+    )
+  );
+}
 
 /**
  *
@@ -40,15 +83,14 @@ export async function checkUserExit(ctx) {
     /*
      * check user exit in DB
      */
-    const user = await getUserByInstagramId(shortLiveAccessTokenData?.user_id);
+    const user = await getUserByShopId(shopId);
     if (user) {
       /*
        * user exited in DB
        */
 
       const {id, expiresIn, instagramId, accessToken, username} = user;
-      const medias = await getMediasByInstagramId(instagramId);
-      if (!(Number(expiresIn) / 1000 - 60 * 60 * 1000 > 0)) {
+      if (Number(expiresIn) / 1000 - 60 * 60 * 1000 <= 0) {
         /*
          * token expired => refresh token
          */
@@ -69,6 +111,7 @@ export async function checkUserExit(ctx) {
           expiresIn: Date.now() + expires_in * 1000,
           updatedAt: new Date()
         });
+
         if (!updateResult) {
           return (ctx.body = {
             data: [],
@@ -83,8 +126,7 @@ export async function checkUserExit(ctx) {
           data: {
             id,
             instagramId,
-            username,
-            medias: medias?.medias
+            username
           },
           status: true
         });
@@ -96,8 +138,7 @@ export async function checkUserExit(ctx) {
         data: {
           id,
           instagramId,
-          username,
-          medias: medias?.medias
+          username
         },
         status: true
       });
@@ -148,7 +189,6 @@ export async function checkUserExit(ctx) {
      * get media from Instagram API => save to DB
      */
     const media = await Instagram.getMedia(shortLiveAccessTokenData?.user_id, access_token);
-    console.log(media.data, id, userId);
     if (!media) {
       return (ctx.body = {
         data: [],
@@ -156,12 +196,24 @@ export async function checkUserExit(ctx) {
         status: false
       });
     }
-    const saveMediaResult = await saveMediasWithInstagramId(
-      shopInfo?.shopifyDomain,
-      shopId,
-      id,
-      userId,
-      media.data
+    /*
+     * save media to DB (max item in media is 2), large item will be save to other document
+     */
+    const mediasSeparated = separateArray(media.data, 2);
+    const saveMediaResult = await Promise.all(
+      mediasSeparated.map(
+        async media =>
+          await saveMediasWithInstagramId(
+            shopInfo?.shopifyDomain,
+            shopId,
+            id,
+            userId,
+            media.map(item => ({
+              ...item,
+              lastSync: Date.now()
+            }))
+          )
+      )
     );
     if (!saveMediaResult) {
       return (ctx.body = {
@@ -174,8 +226,7 @@ export async function checkUserExit(ctx) {
       data: {
         username,
         instagramId: id,
-        id: userId,
-        medias: saveMediaResult?.medias
+        id: userId
       },
       status: true
     });
@@ -196,9 +247,13 @@ export async function checkUserExit(ctx) {
  */
 export async function getUserDataByInstagramId(ctx) {
   try {
-    const data = ctx.req.query;
-    const user = await getUserByInstagramId(data.instagramId);
-    const medias = await getMediasByInstagramId(data.instagramId);
+    const shopId = getCurrentShop(ctx);
+    const [user, medias] = await Promise.all([getUserByShopId(shopId), getMediasByShopId(shopId)]);
+    /* data da ton tai nhung media_url(IMAGE) || media_url, thumbnail_url (VIDEO) da het han*/
+    const expriredMediaIds = filterExpriredId(medias);
+    if (expriredMediaIds.length > 0) {
+      await refreshMedias(expriredMediaIds, medias, user?.accessToken);
+    }
     if (!user) {
       return (ctx.body = {
         data: [],
@@ -212,7 +267,92 @@ export async function getUserDataByInstagramId(ctx) {
         id,
         instagramId,
         username,
-        medias
+        medias: (await getMediasByShopId(shopId)).map(item => item?.medias).flat()
+      },
+      status: true
+    });
+  } catch (e) {
+    console.log(e);
+    return (ctx.body = {
+      data: [],
+      error: e.message,
+      status: false
+    });
+  }
+}
+
+/**
+ * @param shopId
+ * @param shopifyDomain
+ * @param instagramId
+ * @param userId
+ * @param oldMedias
+ * @param newMedias
+ * @returns {Promise<*[]>}
+ */
+async function mergeMedias(shopId, shopifyDomain, instagramId, userId, oldMedias, newMedias) {
+  const formattedMedia = oldMedias.map(item => item.medias).flat();
+  const newMediaIds = newMedias.data.map(item => item.id);
+  const oldMediaIds = formattedMedia.map(item => item.id);
+  /*
+   * exit in new, not in old => new
+   * exit in old, not in new => delete
+   */
+  const deleteMediaIds = oldMediaIds.filter(id => !newMediaIds.includes(id));
+  const newMediasNotInOld = newMediaIds.filter(id => !oldMediaIds.includes(id));
+  if (deleteMediaIds.length > 0 || newMediasNotInOld.length > 0) {
+    const updatedMedias = formattedMedia.filter(item => !deleteMediaIds.includes(item.id));
+    newMedias.data.map(item => {
+      if (newMediasNotInOld.includes(item.id)) {
+        const baseObj = {
+          ...item,
+          media_url: item?.media_url,
+          lastSync: Date.now()
+        };
+        updatedMedias.push(
+          item.media_type === 'VIDEO' ? {...baseObj, thumbnail_url: item.thumbnail_url} : baseObj
+        );
+      }
+    });
+    const synced = separateArray(updatedMedias, 2);
+    const maxIndex = Math.max(oldMedias.length, synced.length);
+    for (let index = 0; index < maxIndex; index++) {
+      if (oldMedias[index] !== undefined) {
+        if (synced[index] !== undefined) {
+          await updateMediaById(oldMedias[index].id, oldMedias[index].instagramId, {
+            ...oldMedias[index],
+            medias: synced[index]
+          });
+        } else {
+          await deleteMediaById(oldMedias[index].id);
+        }
+      } else {
+        if (synced[index] !== undefined) {
+          await saveMediasWithInstagramId(
+            shopifyDomain,
+            shopId,
+            instagramId,
+            userId,
+            synced[index]
+          );
+        }
+      }
+    }
+  }
+}
+export async function syncNewMedias(ctx) {
+  try {
+    const shopId = getCurrentShop(ctx);
+    const [user, medias] = await Promise.all([getUserByShopId(shopId), getMediasByShopId(shopId)]);
+    const {instagramId, accessToken, username, id, shopifyDomain} = user;
+    const newestMedias = await Instagram.getMedia(instagramId, accessToken);
+    await mergeMedias(shopId, shopifyDomain, instagramId, id, medias, newestMedias);
+    return (ctx.body = {
+      data: {
+        id,
+        instagramId,
+        username,
+        medias: (await getMediasByShopId(shopId)).map(item => item?.medias).flat()
       },
       status: true
     });

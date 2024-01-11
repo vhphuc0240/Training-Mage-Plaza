@@ -140,4 +140,20 @@ export default class InstagramApi {
       return null;
     }
   };
+
+  getMediaById = async (mediaId, longLiveAccessToken) => {
+    try {
+      const mediaData = await axios.get(
+        `https://graph.instagram.com/v18.0/${mediaId}?fields=id,caption,media_type,media_url,permalink,thumbnail_url,timestamp&access_token=${longLiveAccessToken}`
+      );
+      if (mediaData.status !== 200) {
+        return null;
+      }
+      return mediaData.data;
+    } catch (e) {
+      console.log(e);
+      console.log(e?.response?.data);
+      return null;
+    }
+  };
 }

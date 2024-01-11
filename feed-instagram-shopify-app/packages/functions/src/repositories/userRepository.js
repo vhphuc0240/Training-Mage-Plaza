@@ -21,15 +21,13 @@ export async function saveUser(data) {
 
 /**
  *
- * @param instagramId
+ * @param shopId
  * @returns {Promise<{[p: string]: FirebaseFirestore.DocumentFieldValue, id: string}|null>}
  */
-export async function getUserByInstagramId(instagramId) {
+export async function getUserByShopId(shopId) {
   try {
-    console.log(instagramId, 'instagramId', typeof instagramId);
-    const igId = typeof instagramId == 'string' ? instagramId : instagramId.toString();
     const userSnapshot = await userRef
-      .where('instagramId', '==', igId)
+      .where('shopId', '==', shopId)
       .limit(1)
       .get();
     if (userSnapshot.empty) return null;

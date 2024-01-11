@@ -28,6 +28,7 @@ export default function useFetchApi({
 
   async function fetchApi(apiUrl, params = null, keepPreviousData = false) {
     try {
+      console.log('fetchApi', apiUrl, url);
       setLoading(true);
       const path = apiUrl || url;
       const separateChar = path.includes('?') ? '&' : '?';

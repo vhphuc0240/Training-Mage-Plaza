@@ -5,12 +5,12 @@ const firestore = new Firestore();
 const settingRef = firestore.collection('settings');
 
 /**
- * @param instagramId
+ * @param shopId
  * @returns {Promise<FirebaseFirestore.DocumentData|null>}
  */
-export async function getSettingsByInstagramId(instagramId) {
+export async function getSettingsByShopId(shopId) {
   try {
-    const settingSnapshot = await settingRef.doc(instagramId).get();
+    const settingSnapshot = await settingRef.doc(shopId).get();
     if (!settingSnapshot.exists) return null;
     return settingSnapshot.data();
   } catch (e) {

@@ -42,10 +42,7 @@ export default function Home() {
   };
   const {data: settings, setData: setSettings} = useFetchApi({
     url: '/settings',
-    initLoad: !!state?.user?.instagramId,
-    initQueries: {
-      instagramId: state?.user?.instagramId
-    },
+    initLoad: !!state?.user?.id,
     defaultData: initSettings
   });
   const [popup, setPopup] = useState(window);
@@ -64,17 +61,23 @@ export default function Home() {
     url: '/settings',
     fullResp: true
   });
-  const {loading} = useFetchApi({
+  const {data, setData, loading} = useFetchApi({
     url: '/user',
-    initLoad: !!state?.user?.instagramId,
-    initQueries: {
-      instagramId: state?.user?.instagramId
-    }
+    initLoad: !!state?.user?.id
+  });
+  const {fetchApi: handleSyncMedia, loading: syncing} = useFetchApi({
+    url: '/sync',
+    initLoad: false,
+    presentData: setData
   });
   const {handleDelete: handleLogout, deleting} = useDeleteApi({
     url: '/user'
   });
 
+  // const handleUpdateMedia = async () => {
+  //   await handleSyncMedia();
+  //   setData(syncedMedias);
+  // };
   useEffect(() => {
     const params = queryString.parse(window.location.search);
 
@@ -111,16 +114,17 @@ export default function Home() {
     await handleLogout({
       id: state?.user?.id
     });
+    setData(null);
     disconnect();
   };
 
-  const timer = setInterval(function() {
+  const timer = setInterval(() => {
     if (popup.closed) {
-      clearInterval(timer);
+      console.log(data);
       updateUser(JSON.parse(localStorage.getItem('user')).user);
+      clearInterval(timer);
     }
   }, 1000);
-
   const handleChange = (value, name) => {
     setSettings(prev => ({...prev, [name]: value}));
   };
@@ -197,6 +201,12 @@ export default function Home() {
                               Disconnect
                             </Button>
                           </Stack.Item>
+                          <Stack.Item>|</Stack.Item>
+                          <Stack.Item>
+                            <Button onClick={() => handleSyncMedia()} primary loading={syncing}>
+                              Sync
+                            </Button>
+                          </Stack.Item>
                         </Stack>
                       )}
                     </FormLayout>
@@ -223,20 +233,6 @@ export default function Home() {
                         />
 
                         <Stack alignment="trailing" distribution="fill">
-                          {/* <Stack.Item>*/}
-                          {/*  <Select*/}
-                          {/*    label={<TextStyle variation="strong">On post click</TextStyle>}*/}
-                          {/*    value="new_tab"*/}
-                          {/*    options={[*/}
-                          {/*      {label: 'Open in new tab', value: 'new_tab'},*/}
-                          {/*      {*/}
-                          {/*        label: 'Open in same tab',*/}
-                          {/*        value: 'same_tab'*/}
-                          {/*      }*/}
-                          {/*    ]}*/}
-                          {/*  />*/}
-                          {/* </Stack.Item>*/}
-
                           <Stack.Item>
                             <TextField
                               autoComplete="off"
@@ -247,20 +243,6 @@ export default function Home() {
                               onChange={value => handleChange(`${value}px`, 'spacing')}
                             />
                           </Stack.Item>
-
-                          {/* <Stack.Item>*/}
-                          {/*  <Select*/}
-                          {/*    label={<TextStyle variation="strong">Rounded corners</TextStyle>}*/}
-                          {/*    value="new_tab"*/}
-                          {/*    options={[*/}
-                          {/*      {label: 'Open in new tab', value: 'new_tab'},*/}
-                          {/*      {*/}
-                          {/*        label: 'Open in same tab',*/}
-                          {/*        value: 'same_tab'*/}
-                          {/*      }*/}
-                          {/*    ]}*/}
-                          {/*  />*/}
-                          {/* </Stack.Item>*/}
                         </Stack>
 
                         <Stack alignment="trailing" distribution="fill">
@@ -268,6 +250,7 @@ export default function Home() {
                             <Select
                               label={<TextStyle variation="strong">Layout</TextStyle>}
                               value="grid"
+                              onChange={value => handleChange(value, 'layout')}
                               options={[
                                 {label: 'Open in new tab', value: 'new_tab'},
                                 {
@@ -277,20 +260,6 @@ export default function Home() {
                               ]}
                             />
                           </Stack.Item>
-
-                          {/* <Stack.Item>*/}
-                          {/*  <Select*/}
-                          {/*    label={<TextStyle variation="strong">Configuration</TextStyle>}*/}
-                          {/*    value="new_tab"*/}
-                          {/*    options={[*/}
-                          {/*      {label: 'Open in new tab', value: 'new_tab'},*/}
-                          {/*      {*/}
-                          {/*        label: 'Open in same tab',*/}
-                          {/*        value: 'same_tab'*/}
-                          {/*      }*/}
-                          {/*    ]}*/}
-                          {/*  />*/}
-                          {/* </Stack.Item>*/}
                         </Stack>
 
                         <Stack alignment="trailing" distribution="fill">
@@ -325,26 +294,13 @@ export default function Home() {
               </Layout>
             </FormLayout>
           </Layout.Section>
-          <Layout.Section >
-            {/*  /!*<FormLayout>*!/*/}
-            {/*  /!*  <Layout>*!/*/}
-            {/*  /!*    <Layout.Section>*!/*/}
-            {/*  /!*      <Card sectioned>*!/*/}
-            {/*  /!*        <TextStyle>Your current plant</TextStyle>*!/*/}
-            {/*  /!*        <Badge tone="info">INSTAGRAM FEED FREE</Badge>*!/*/}
-            {/*  /!*      </Card>*!/*/}
-            {/*  /!*    </Layout.Section>*!/*/}
-            {/*  /!*  </Layout>*!/*/}
-            {/*  /!*</FormLayout>*!/*/}
+          <Layout.Section>
             <FormLayout>
               <Layout>
                 <Layout.Section>
                   <Card sectioned title="Preview">
                     <Card.Section>
-                      <PreviewMediaSetup
-                        settings={settings}
-                        medias={JSON.parse(localStorage.getItem('user'))?.user?.medias}
-                      />
+                      <PreviewMediaSetup settings={settings} medias={data?.medias} />
                     </Card.Section>
                   </Card>
                 </Layout.Section>

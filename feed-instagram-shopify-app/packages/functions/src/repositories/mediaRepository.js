@@ -10,7 +10,7 @@ const mediasRef = firestore.collection('medias');
  * @param instagramId
  * @param userId
  * @param medias
- * @returns {Promise<{medias, instagramId, id: string, shopId, shopifyDomain, userId}|boolean>}
+ * @returns {Promise<{medias, instagramId, index, id: string, shopId, shopifyDomain, userId}|boolean>}
  */
 export async function saveMediasWithInstagramId(
   shopifyDomain,
@@ -43,15 +43,12 @@ export async function saveMediasWithInstagramId(
 
 /**
  *
- * @param instagramId
+ * @param shopId
  * @returns {Promise<(*&{id: *})[]|*[]>}
  */
-export async function getMediasByInstagramId(instagramId) {
+export async function getMediasByShopId(shopId) {
   try {
-    const mediaSnapshot = await mediasRef
-      .where('instagramId', '==', instagramId)
-      .orderBy('timestamp', 'desc')
-      .get();
+    const mediaSnapshot = await mediasRef.where('shopId', '==', shopId).get();
     if (mediaSnapshot.empty) return [];
     return mediaSnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
   } catch (e) {
@@ -93,5 +90,23 @@ export async function getMediaByShopifyDomain(shopifyDomain) {
   } catch (e) {
     console.log(e);
     return [];
+  }
+}
+
+export async function updateMediaById(id, instagramId, data) {
+  try {
+    await mediasRef.doc(id).update(data);
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+}
+
+export async function deleteMediaById(id) {
+  try {
+    await mediasRef.doc(id).delete();
+  } catch (e) {
+    console.log(e);
+    return false;
   }
 }

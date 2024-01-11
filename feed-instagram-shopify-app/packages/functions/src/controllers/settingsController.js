@@ -1,5 +1,5 @@
 import {
-  getSettingsByInstagramId,
+  getSettingsByShopId,
   saveSettingsWithInstagramId
 } from '@functions/repositories/settingsRepository';
 import {getCurrentShop} from '@functions/helpers/auth';
@@ -12,8 +12,8 @@ import {createShopifyClassWithShopId} from '@functions/helpers/utils/createShopi
  */
 export async function getSettingsByIgId(ctx) {
   try {
-    const {instagramId} = ctx.query;
-    const result = await getSettingsByInstagramId(instagramId);
+    const shopId = getCurrentShop(ctx);
+    const result = await getSettingsByShopId(shopId);
     if (!result) {
       return (ctx.body = {
         success: false,

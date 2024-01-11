@@ -11,7 +11,6 @@ import moment from 'moment';
  * @constructor
  */
 function PreviewMediaSetup({settings, medias}) {
-  console.log(medias[0]);
   return (
     <>
       {medias?.length > 0 && (
