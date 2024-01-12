@@ -1,6 +1,62 @@
 {
   "indexes": [
     {
+      "collectionGroup": "medias",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "instagramId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "part",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "medias",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "instagramId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "medias",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "shopId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "part",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "medias",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "shopifyDomain",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "subscriptions",
       "queryScope": "COLLECTION",
       "fields": [

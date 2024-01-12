@@ -26,6 +26,7 @@
     "deploy-shopify-reset": "shopify app deploy --reset",
     "make:ssl": "avada make:ssl",
     "update-localhost-runtime": "node ./scripts/updateLocalUrl.js",
+    "update-index": "node ./scripts/syncIndex.js",
     "timeout": "delay 3"
   },
   "devDependencies": {
