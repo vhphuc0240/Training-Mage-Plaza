@@ -16,6 +16,7 @@ import {getCurrentShop} from '@functions/helpers/auth';
 import {getShopById} from '@functions/repositories/shopRepository';
 import {deleteSettingsByShopifyDomain} from '@functions/repositories/settingsRepository';
 import {filterExpriredId, separateArray} from '@functions/helpers/utils/separateArray';
+import {sortByTime} from '@functions/helpers/utils/sortByTime';
 
 const Instagram = new InstagramApi();
 
@@ -267,7 +268,10 @@ export async function getUserDataByInstagramId(ctx) {
         id,
         instagramId,
         username,
-        medias: (await getMediasByShopId(shopId)).map(item => item?.medias).flat()
+        medias: (await getMediasByShopId(shopId))
+          .map(item => item?.medias)
+          .flat()
+          .sort(sortByTime)
       },
       status: true
     });
@@ -340,6 +344,7 @@ async function mergeMedias(shopId, shopifyDomain, instagramId, userId, oldMedias
     }
   }
 }
+
 export async function syncNewMedias(ctx) {
   try {
     const shopId = getCurrentShop(ctx);
@@ -352,7 +357,10 @@ export async function syncNewMedias(ctx) {
         id,
         instagramId,
         username,
-        medias: (await getMediasByShopId(shopId)).map(item => item?.medias).flat()
+        medias: (await getMediasByShopId(shopId))
+          .map(item => item?.medias)
+          .flat()
+          .sort(sortByTime)
       },
       status: true
     });
