@@ -10,9 +10,9 @@ const settingRef = firestore.collection('settings');
  */
 export async function getSettingsByShopId(shopId) {
   try {
-    const settingSnapshot = await settingRef.doc(shopId).get();
-    if (!settingSnapshot.exists) return null;
-    return settingSnapshot.data();
+    const settingSnapshot = await settingRef.where('shopId', '==', shopId).get();
+    if (settingSnapshot.empty) return null;
+    return settingSnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))[0];
   } catch (e) {
     console.log(e);
     return null;
