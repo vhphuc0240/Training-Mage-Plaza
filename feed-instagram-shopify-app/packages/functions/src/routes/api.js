@@ -5,6 +5,7 @@ import * as subscriptionController from '@functions/controllers/subscriptionCont
 import * as appNewsController from '@functions/controllers/appNewsController';
 import * as userController from '@functions/controllers/userController';
 import * as settingsController from '@functions/controllers/settingsController';
+import * as mediaController from '@functions/controllers/mediaController';
 
 import {getApiPrefix} from '@functions/const/app';
 
@@ -17,12 +18,13 @@ export default function apiRouter(isEmbed = false) {
   router.get('/appNews', appNewsController.getList);
 
   router.post('/check-user-exit', userController.checkUserExit);
-  router.get('/user', userController.getUserDataByInstagramId);
+  router.get('/user', userController.getUserData);
   router.delete('/user', userController.deleteUser);
   router.get('/sync', userController.syncNewMedias);
   // router.get('/get-media');
   router.put('/settings', settingsController.saveSettings);
   router.get('/settings', settingsController.getSettingsByIgId);
+  router.put('/media', mediaController.updateHiddenMediaById);
 
   return router;
 }
