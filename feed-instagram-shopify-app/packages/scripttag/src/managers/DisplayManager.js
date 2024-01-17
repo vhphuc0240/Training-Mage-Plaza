@@ -9,7 +9,15 @@ export default class DisplayManager {
 
   init(medias, settings) {
     this.insertContainer();
-    render(<PreviewMediaSetup medias={medias} settings={settings} />, document.getElementById(this.RENDER_TAG_ID));
+    render(
+      <PreviewMediaSetup
+        medias={medias}
+        settings={settings}
+        isPreview={false}
+        handleEditHidden={() => {}}
+      />,
+      document.getElementById(this.RENDER_TAG_ID)
+    );
   }
 
   insertContainer() {
