@@ -1,16 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Page, TextStyle} from '@shopify/polaris';
+import {Button, Page, TextStyle} from '@shopify/polaris';
 import './PreviewMediaSetup.scss';
 import moment from 'moment';
+import {HideMinor, ViewMinor} from '@shopify/polaris-icons';
 
 /**
  * @param settings
  * @param medias
+ * @param isPreview
+ * @param handleEditHidden
  * @returns {JSX.Element}
  * @constructor
  */
-function PreviewMediaSetup({settings, medias}) {
+export default function PreviewMediaSetup({
+  settings,
+  medias,
+  isPreview = true,
+  handleEditHidden = () => {}
+}) {
   return (
     <>
       {medias?.length > 0 && (
@@ -44,6 +52,13 @@ function PreviewMediaSetup({settings, medias}) {
                   />
                   <div className="Preview_ItemContainer--HoverText">
                     {moment(media.timestamp).format('LL')}
+                    {isPreview && (
+                      <Button
+                        plain
+                        icon={media?.hidden ? ViewMinor : HideMinor}
+                        onClick={() => handleEditHidden(media?.docId, media?.id, !media?.hidden)}
+                      />
+                    )}
                   </div>
                 </div>
               ))}
@@ -66,9 +81,9 @@ PreviewMediaSetup.propTypes = {
     PropTypes.shape({
       id: PropTypes.string,
       media_url: PropTypes.string,
-      timestamp: PropTypes.number
+      timestamp: PropTypes.string
     })
-  )
+  ),
+  isPreview: PropTypes.bool,
+  handleEditHidden: PropTypes.func
 };
-
-export default PreviewMediaSetup;

@@ -42,7 +42,8 @@
         }
 
         .Preview_ItemContainer--HoverText {
-          display: block;
+          display: flex;
+          flex-direction: column;
         }
       }
     }
