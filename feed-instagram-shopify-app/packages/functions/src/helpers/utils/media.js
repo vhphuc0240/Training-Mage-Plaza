@@ -64,19 +64,11 @@ export function mergeMedias(oldMedias, newMedias) {
       }
       return {};
     });
-    console.log(
-      JSON.stringify(
-        newMedia.filter(i => i?.id !== undefined),
-        null,
-        2
-      ),
-      'newMedia in line 66'
-    );
+
     const synced = separateArray(
       [...updatedMedias, ...newMedia.filter(i => i?.id !== undefined)],
       2
     );
-    console.log(JSON.stringify(synced, null, 2), 'synced in line 68');
     const maxIndex = Math.max(oldMedias.length, synced.length);
     const mergedMedias = {
       update: [],
