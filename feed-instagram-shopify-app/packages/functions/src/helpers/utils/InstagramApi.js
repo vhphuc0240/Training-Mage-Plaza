@@ -41,15 +41,10 @@ export default class InstagramApi {
    */
   getLongLiveAccessToken = async shortLiveAccessToken => {
     try {
-      const form = new FormData();
-      form.append('grant_type', 'ig_exchange_token');
-      form.append('client_secret', this.clientSecret);
-      form.append('access_token', shortLiveAccessToken);
-
       const shortLiveAccessTokenData = await axios.get(
         `https://graph.instagram.com/access_token?${qs.stringify({
           grant_type: 'ig_exchange_token',
-          client_secret: config.instagram.secret,
+          client_secret: this.clientSecret,
           access_token: shortLiveAccessToken
         })}`
       );
