@@ -10,8 +10,7 @@ export async function getMedias(ctx) {
         success: false,
         message: 'Something went wrong'
       });
-    console.log(JSON.stringify(data, null, 4), 'data in line 13');
-    data[0].medias = data[0].medias.sort(sortByTime);
+    data[0].medias = data[0].medias.filter(media => !media.hidden).sort(sortByTime);
     return (ctx.body = {
       success: true,
       data
