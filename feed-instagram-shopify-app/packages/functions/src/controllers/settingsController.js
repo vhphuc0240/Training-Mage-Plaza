@@ -1,6 +1,6 @@
 import {
   getSettingsByShopId,
-  saveSettingsWithInstagramId
+  updateSettingsByShopId
 } from '@functions/repositories/settingsRepository';
 import {getCurrentShop} from '@functions/helpers/auth';
 import {getShopById} from '@functions/repositories/shopRepository';
@@ -16,8 +16,8 @@ export async function getSettingsByIgId(ctx) {
     const result = await getSettingsByShopId(shopId);
     if (!result) {
       return (ctx.body = {
-        success: false,
-        error: 'Failed to get settings'
+        success: true,
+        data: {}
       });
     }
     return (ctx.body = {
@@ -39,12 +39,8 @@ export async function getSettingsByIgId(ctx) {
  */
 export async function saveSettings(ctx) {
   try {
-    const {
-      data: {id, ...settings}
-    } = ctx.req.body;
-
+    const {data: settings} = ctx.req.body;
     const shopId = getCurrentShop(ctx);
-    const shopInfo = await getShopById(shopId);
     const shopify = await createShopifyClassWithShopId(shopId);
 
     const metafields = await shopify.metafield.list({
@@ -76,7 +72,7 @@ export async function saveSettings(ctx) {
           await shopify.metafield.update(metafield.id, {value: JSON.stringify(settings)})
       )
     );
-    const result = await saveSettingsWithInstagramId(shopInfo?.shopifyDomain, shopId, id, settings);
+    const result = await updateSettingsByShopId(shopId, settings);
     if (!result) {
       return (ctx.body = {
         success: false,

@@ -26,9 +26,11 @@ export async function getSettingsByShopId(shopId) {
  * @param settings
  * @returns {Promise<(*&{id, shopId, shopifyDomain})|boolean>}
  */
-export async function saveSettingsWithInstagramId(shopifyDomain, shopId, instagramId, settings) {
+export async function saveSettingsWithShopId(shopifyDomain, shopId, instagramId, settings) {
   try {
-    await settingRef.doc(instagramId).set({shopifyDomain, shopId, ...settings}, {merge: true});
+    await settingRef
+      .doc(shopId)
+      .set({shopifyDomain, shopId, instagramId, ...settings}, {merge: true});
     return {
       id: instagramId,
       ...settings,
@@ -41,15 +43,29 @@ export async function saveSettingsWithInstagramId(shopifyDomain, shopId, instagr
   }
 }
 
+export async function updateSettingsByShopId(shopId, settings) {
+  try {
+    await settingRef.doc(shopId).set({...settings}, {merge: true});
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+}
+
 /**
- * @param shopifyDomain
+ * @param shopId
  * @returns {Promise<boolean>}
  */
-export async function deleteSettingsByShopifyDomain(shopifyDomain) {
+export async function deleteSettingsByShopId(shopId) {
   try {
-    const settings = await settingRef.where('shopifyDomain', '==', shopifyDomain).get();
-    if (settings.empty) return true;
-    await Promise.all(settings.docs.map(async doc => await doc.ref.delete()));
+    const settingsSnapshot = await settingRef.where('shopId', '==', shopId).get();
+    if (settingsSnapshot.empty) return true;
+    const batch = firestore.batch();
+    settingsSnapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
     return true;
   } catch (e) {
     console.log(e);

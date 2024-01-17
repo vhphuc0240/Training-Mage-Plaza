@@ -71,9 +71,19 @@ export async function updateUserWhenRefreshInstagramAccessToken(id, data) {
   }
 }
 
-export async function deleteUserById(id) {
+/**
+ * @param shopId
+ * @returns {Promise<boolean>}
+ */
+export async function deleteUserByShopId(shopId) {
   try {
-    await userRef.doc(id).delete();
+    const userSnapshot = await userRef.where('shopId', '==', shopId).get();
+    if (userSnapshot.empty) return true;
+    const batch = firestore.batch();
+    userSnapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
     return true;
   } catch (e) {
     console.log(e);

@@ -2,7 +2,7 @@
 
 name = "Feed Instagram App"
 client_id = "1b849229c05fc3ad6905e3b5bc412356"
-application_url = "https://sites-aw-civil-instructor.trycloudflare.com/auth/shopify"
+application_url = "https://brand-wma-extends-reg.trycloudflare.com/auth/shopify"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,9 @@ use_legacy_install_flow = true
 
 [auth]
 redirect_urls = [
-  "https://sites-aw-civil-instructor.trycloudflare.com/auth/shopify/callback",
-  "https://sites-aw-civil-instructor.trycloudflare.com/authSa/shopify/callback",
-  "https://sites-aw-civil-instructor.trycloudflare.com/auth/shopify/embed/callback",
+  "https://brand-wma-extends-reg.trycloudflare.com/auth/shopify/callback",
+  "https://brand-wma-extends-reg.trycloudflare.com/authSa/shopify/callback",
+  "https://brand-wma-extends-reg.trycloudflare.com/auth/shopify/embed/callback",
   "https://localhost:3000/auth/shopify/callback",
   "https://localhost:3000/authSa/shopify/callback",
   "https://localhost:3000/auth/shopify/embed/callback"
